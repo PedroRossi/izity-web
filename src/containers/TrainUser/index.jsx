@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import { withRouter } from 'react-router-dom'
+import { Redirect, withRouter } from 'react-router-dom'
 import { ReactMic } from 'react-mic'
 import RaisedButton from 'material-ui/RaisedButton'
 import IconButton from 'material-ui/IconButton'
 
-import AVMicNone from 'material-ui/svg-icons/av/mic-none'
+import AVPlayArrow from 'material-ui/svg-icons/av/play-arrow'
+import AVStop from 'material-ui/svg-icons/av/stop'
 
 import { UserFactory } from '../../factories'
 
@@ -20,37 +21,39 @@ class TrainUser extends Component {
         this.setState({user})
     }
 
-    startRecording = () => {
-        this.setState({
-          record: true
-        });
-    }
+    startRecording = () => this.setState({record: true})
     
-    stopRecording = () => {
-        this.setState({
-          record: false
-        });
-    }
+    stopRecording = () => this.setState({record: false})
     
     onData(recordedBlob) {
-        console.log('chunk of real-time data is: ', recordedBlob);
+        // console.log('chunk of real-time data is: ', recordedBlob)
     }
     
-    onStop(recordedBlob) {
-        console.log('recordedBlob is: ', recordedBlob);
+    onStop = async (recordedBlob) => {
+        // const blob = recordedBlob.blob
+        // console.log(recordedBlob)
+        // const data = await UserFactory.train(this.state.user, record)
+        // console.log(data)
     }
 
     render() {
         if (!this.state.user)
-            return (<div><p>Carregando...</p></div>)
+            return (<div><p>{"Carregando..."}</p></div>)
+        if (this.state.user.trained)
+            return (<Redirect/>)
         return (
             <div style={styles.wrapper}>
                 <h3>{this.state.user.name}</h3>
                 <div style={styles.vAlign}>
                     <div>
-                        <IconButton style={styles.icon} iconStyle={styles.iconStyle} onClick={this.handleOpen}>
-                            <AVMicNone color="white"/>
-                        </IconButton>
+                        {this.state.record ? 
+                            <IconButton style={styles.icon} iconStyle={styles.iconStyle} onClick={this.stopRecording}>
+                                <AVStop color="white"/>
+                            </IconButton>:
+                            <IconButton style={styles.icon} iconStyle={styles.iconStyle} onClick={this.startRecording}>
+                                <AVPlayArrow color="white"/>
+                            </IconButton>
+                        }
                     </div>
                     <p>
                         {"Clique no botão e grave a frase abaixo até a sua voz cadastrar"}
@@ -62,8 +65,7 @@ class TrainUser extends Component {
                     <ReactMic
                         record={this.state.record}
                         onStop={this.onStop}
-                        strokeColor="#000000"
-                        backgroundColor="#FF4081"
+                        visualSetting=''
                     />
                 </div>
             </div>

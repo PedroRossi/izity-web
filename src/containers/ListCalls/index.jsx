@@ -1,18 +1,18 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
-import DatePicker from 'material-ui/DatePicker'
-import TimePicker from 'material-ui/TimePicker'
-import SelectField from 'material-ui/SelectField'
-import MenuItem from 'material-ui/MenuItem'
 import FlatButton from 'material-ui/FlatButton'
+import RaisedButton from 'material-ui/RaisedButton'
 import IconButton from 'material-ui/IconButton'
 import Dialog from 'material-ui/Dialog'
 import { Card, CardText } from 'material-ui/Card'
+// import DatePicker from 'material-ui/DatePicker'
+// import TimePicker from 'material-ui/TimePicker'
+// import SelectField from 'material-ui/SelectField'
+// import MenuItem from 'material-ui/MenuItem'
 
 import ActionDescription from 'material-ui/svg-icons/action/description'
 import AVPlay from 'material-ui/svg-icons/av/play-circle-filled'
-
-import searchIcon from '../../assets/search.svg'
+import Search from 'material-ui/svg-icons/action/search'
 
 import { CallFactory } from '../../factories'
 
@@ -23,12 +23,13 @@ class ListCalls extends Component {
         query: {
             day: null,
             time: null,
-            authorized: null
+            authorized: null,
         },
+        text: null,
         dialog: ''
     }
 
-    async componentDidMount() {
+    requestCalls = async () => {
         let data = await CallFactory.list()
         data.forEach(call => {
             call.start = new Date(call.start)
@@ -43,6 +44,14 @@ class ListCalls extends Component {
 
     openAudioOnNewTab = (call) => CallFactory.getAudioById(call._id)
 
+    onFilterChange = (param, value) => {
+        let st = {query:this.state.query}
+        st.query[param] = value
+        this.setState(st)
+    }
+
+    handleTextChange = (ev) => this.setState({text: ((ev.target.value !== '') ? ev.target.value:null)})
+
     render() {
         const actions = [
             <FlatButton
@@ -55,12 +64,16 @@ class ListCalls extends Component {
         return (
             <div style={styles.wrapper}>
                 <div style={styles.searchRow}>
-                    <input type="text" style={styles.input} placholder="Digite sua pesquisa"/>
+                    <input type="text" style={styles.input} onChange={this.handleTextChange}/>
                     <span style={styles.span}>
-                        <img src={searchIcon} alt="" style={styles.img}/>
+                        <RaisedButton 
+                            primary={true}
+                            icon={<Search color="white"/>}
+                            onClick={this.requestCalls}
+                        />
                     </span>
                 </div>
-                <div style={styles.rowWithCols}>
+                {/* <div style={styles.rowWithCols}>
                     <div style={styles.col}>
                         <DatePicker hintText="Dia da ligação" mode="landscape" value={this.state.query.day}/>
                     </div>
@@ -78,7 +91,7 @@ class ListCalls extends Component {
                             <MenuItem value={false} primaryText="Não" />
                         </SelectField>
                     </div>
-                </div>
+                </div> */}
                 {this.state.calls.map(call => {
                     const start = `${call.start.getHours()}:${call.start.getMinutes()}`
                     const end = `${call.end.getHours()}:${call.end.getMinutes()}`
@@ -146,7 +159,8 @@ const styles = {
         display: 'flex'
     },
     input: {
-        flex: 10
+        flex: 10,
+
     },
     icon: {
         width: 'auto',
@@ -177,7 +191,7 @@ const styles = {
         textAlign: 'center',
         justifyContent: 'center',
         verticalAlign: 'middle',
-        backgroundColor: 'pink',
+        backgroundColor: '#B50156',
         flex: 1,
         height: '100%',
         width: 'auto'
