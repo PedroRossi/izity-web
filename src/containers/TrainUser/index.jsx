@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
+import { ReactMic } from 'react-mic'
 import RaisedButton from 'material-ui/RaisedButton'
 import IconButton from 'material-ui/IconButton'
 
@@ -10,12 +11,33 @@ import { UserFactory } from '../../factories'
 class TrainUser extends Component {
 
     state = {
-        user: null
+        user: null,
+        record: false
     }
 
     async componentDidMount() {
         const user = await UserFactory.getById(this.props.match.params.id)
         this.setState({user})
+    }
+
+    startRecording = () => {
+        this.setState({
+          record: true
+        });
+    }
+    
+    stopRecording = () => {
+        this.setState({
+          record: false
+        });
+    }
+    
+    onData(recordedBlob) {
+        console.log('chunk of real-time data is: ', recordedBlob);
+    }
+    
+    onStop(recordedBlob) {
+        console.log('recordedBlob is: ', recordedBlob);
     }
 
     render() {
@@ -36,6 +58,12 @@ class TrainUser extends Component {
                     <RaisedButton
                         label="Minha voz confirma meu acesso"
                         primary={true}
+                    />
+                    <ReactMic
+                        record={this.state.record}
+                        onStop={this.onStop}
+                        strokeColor="#000000"
+                        backgroundColor="#FF4081"
                     />
                 </div>
             </div>
