@@ -1,7 +1,10 @@
+
 import React, { Component } from 'react'
 import {
   BrowserRouter,
-  Route
+  Route,
+  Switch,
+  Redirect
 } from 'react-router-dom'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
@@ -45,13 +48,16 @@ class App extends Component {
                             open={this.state.open}
                             onRequestChange={(open) => this.setState({open})}
                         >
-                            <MenuItem onClick={this.toggleOpen} primaryText="Buscar conversas" pathname="/calls"/>
+                            <MenuItem onClick={this.toggleOpen} primaryText="Buscar conversas" pathname="/"/>
                             <MenuItem onClick={this.toggleOpen} primaryText="Listar usuários" pathname="/users"/>
                         </Drawer>
                         <div style={{textAlign: 'center'}}>
-                            <Route exact path={'/calls'} component={ListCalls}/>
-                            <Route path={'/users'} component={ListUsers}/>
-                            <Route path={'/train/:id'} component={TrainUser}/>
+                            <Switch>
+                                <Route exact path={'/'} component={ListCalls}/>
+                                <Route path={'/users'} component={ListUsers}/>
+                                <Route path={'/train/:id'} component={TrainUser}/>
+                                <Route component={() => <Redirect to="/"/>}/>
+                            </Switch>
                         </div>
                     </div>
                 </MuiThemeProvider>

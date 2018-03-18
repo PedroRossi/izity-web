@@ -7,23 +7,39 @@ import IconButton from 'material-ui/IconButton'
 import AVPlayArrow from 'material-ui/svg-icons/av/play-arrow'
 import AVStop from 'material-ui/svg-icons/av/stop'
 
+// import Recorder from 'recorderjs'
+// import WebAudioRecorder from 'web-audio-recorder-js'
+
 import { UserFactory } from '../../factories'
 
 class TrainUser extends Component {
-
+    
     state = {
         user: null,
         record: false
     }
-
+    
     async componentDidMount() {
         const user = await UserFactory.getById(this.props.match.params.id)
+
+        const AudioContext = window.AudioContext || window.webkitAudioContext
+        const audioCtx = new AudioContext()
+
+        // this.recorder = new Recorder(AudioContext)
+
+        // this.recorder = new WebAudioRecorder(audioCtx)
+
         this.setState({user})
     }
 
-    startRecording = () => this.setState({record: true})
+    startRecording = () => {
+        this.recorder.record()
+        this.setState({record: true})
+    }
     
-    stopRecording = () => this.setState({record: false})
+    stopRecording = () => {
+        this.setState({record: false})
+    }
     
     onData(recordedBlob) {
         // console.log('chunk of real-time data is: ', recordedBlob)
@@ -40,7 +56,7 @@ class TrainUser extends Component {
         if (!this.state.user)
             return (<div><p>{"Carregando..."}</p></div>)
         if (this.state.user.trained)
-            return (<Redirect/>)
+            return (<Redirect to="/users"/>)
         return (
             <div style={styles.wrapper}>
                 <h3>{this.state.user.name}</h3>
@@ -62,11 +78,11 @@ class TrainUser extends Component {
                         label="Minha voz confirma meu acesso"
                         primary={true}
                     />
-                    <ReactMic
+                    {/* <ReactMic
                         record={this.state.record}
                         onStop={this.onStop}
                         visualSetting=''
-                    />
+                    /> */}
                 </div>
             </div>
         )
