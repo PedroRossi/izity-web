@@ -7,9 +7,6 @@ import IconButton from 'material-ui/IconButton'
 import AVPlayArrow from 'material-ui/svg-icons/av/play-arrow'
 import AVStop from 'material-ui/svg-icons/av/stop'
 
-// import Recorder from 'recorderjs'
-// import WebAudioRecorder from 'web-audio-recorder-js'
-
 import { UserFactory } from '../../factories'
 
 class TrainUser extends Component {
@@ -21,14 +18,6 @@ class TrainUser extends Component {
     
     async componentDidMount() {
         const user = await UserFactory.getById(this.props.match.params.id)
-
-        const AudioContext = window.AudioContext || window.webkitAudioContext
-        const audioCtx = new AudioContext()
-
-        // this.recorder = new Recorder(AudioContext)
-
-        // this.recorder = new WebAudioRecorder(audioCtx)
-
         this.setState({user})
     }
 
@@ -46,10 +35,9 @@ class TrainUser extends Component {
     }
     
     onStop = async (recordedBlob) => {
-        // const blob = recordedBlob.blob
-        // console.log(recordedBlob)
-        // const data = await UserFactory.train(this.state.user, record)
-        // console.log(data)
+        const record = recordedBlob.blob
+        const data = await UserFactory.train(this.state.user, record)
+        console.log(data)
     }
 
     render() {
@@ -78,11 +66,11 @@ class TrainUser extends Component {
                         label="Minha voz confirma meu acesso"
                         primary={true}
                     />
-                    {/* <ReactMic
+                    <ReactMic
                         record={this.state.record}
                         onStop={this.onStop}
                         visualSetting=''
-                    /> */}
+                    />
                 </div>
             </div>
         )
